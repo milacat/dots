@@ -11,7 +11,7 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <!-- 搜索spring控件 -->
-    <context:component-scan base-package="com.dots.service,com.dots.dao,com.dots.controller"/>
+    <context:component-scan base-package="com.dots"/>
 
     <!--动态代理实现 不用写dao的实现 -->
     <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
@@ -53,24 +53,8 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
         <property name="password" value="${db2.password}" />
     </bean>
 
-
-    <!-- 数据源动态切换切面配置 -->
-<!--    <aop:config>-->
-<!--        <aop:aspect id="dataSourceAspect" ref="dataSourceInterceptor" order="1">-->
-<!--            &lt;!&ndash; 拦截所有service实现类的方法 &ndash;&gt;-->
-<!--            <aop:pointcut id="dataSourcePointcut"-->
-<!--                          expression="execution(* com.dots.service.*.*(..))"/>-->
-<!--            <aop:before pointcut-ref="dataSourcePointcut" method="intercept" />-->
-<!--        </aop:aspect>-->
-<!--    </aop:config>-->
-
-    <!-- 数据源动态切换实体 -->
-<!--    <bean id="dataSourceInterceptor" class="com.dots.annotation.DataSourceProcess"/>-->
-
-
-
-
-
+    <!--支持aop-->
+    <aop:aspectj-autoproxy proxy-target-class="true" />
 
     <!-- 视图页面配置 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
