@@ -11,15 +11,15 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <!-- 搜索spring控件 -->
-    <context:component-scan base-package="com.dots"/>
+    <context:component-scan base-package="com.dots.service,com.dots.dao,com.dots.controller"/>
 
-    <!-- 配置扫描器，将mybatis接口的实现加入spring中 -->
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <!-- 扫描所有dao接口的实现，加入到ioc容器中  -->
-        <property name="basePackage" value="com.dots"></property>
-<!--        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>-->
+    <!--动态代理实现 不用写dao的实现 -->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.dots.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="mSqlSessionFactory"/>
     </bean>
 
+    <!--多数据源配置，并指定默认配置数据源-->
     <bean id="dataSource" class="com.dots.util.DynamicDataSource">
         <property name="targetDataSources">
             <map key-type="java.lang.String">
@@ -33,7 +33,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
     <!-- id的名称不能就叫sqlSessionFactory，会引起加载问题，待研究 -->
     <bean id="mSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <!--数据库连接池 -->
-        <property name="dataSource" ref="dataSource1"/>
+        <property name="dataSource" ref="dataSource"/>
         <!-- 加载mybatis mapper文件的配置 -->
         <property name="mapperLocations" value="classpath*:mybatis/*.xml"/>
     </bean>
@@ -55,26 +55,22 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 
     <!-- 数据源动态切换切面配置 -->
-    <aop:config>
-        <aop:aspect id="dataSourceAspect" ref="dataSourceInterceptor" order="1">
-            <!-- 拦截所有service实现类的方法 -->
-            <aop:pointcut id="dataSourcePointcut"
-                          expression="execution(* com.dots.service.*(..))"/>
-            <aop:before pointcut-ref="dataSourcePointcut" method="intercept" />
-        </aop:aspect>
-    </aop:config>
+<!--    <aop:config>-->
+<!--        <aop:aspect id="dataSourceAspect" ref="dataSourceInterceptor" order="1">-->
+<!--            &lt;!&ndash; 拦截所有service实现类的方法 &ndash;&gt;-->
+<!--            <aop:pointcut id="dataSourcePointcut"-->
+<!--                          expression="execution(* com.dots.service.*.*(..))"/>-->
+<!--            <aop:before pointcut-ref="dataSourcePointcut" method="intercept" />-->
+<!--        </aop:aspect>-->
+<!--    </aop:config>-->
 
     <!-- 数据源动态切换实体 -->
-    <bean id="dataSourceInterceptor" class="com.dots.annotation.DataSourceProcess"/>
+<!--    <bean id="dataSourceInterceptor" class="com.dots.annotation.DataSourceProcess"/>-->
 
 
 
 
-    <!--动态代理实现 不用写dao的实现 -->
-    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.dots.dao"/>
-        <property name="sqlSessionFactoryBeanName" value="mSqlSessionFactory"/>
-    </bean>
+
 
     <!-- 视图页面配置 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

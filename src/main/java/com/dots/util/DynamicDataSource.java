@@ -10,6 +10,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      * @param datasource 数据源名称
      */
     public static void setDataSource(String datasource) {
+        System.out.println("切换数据源 - "+datasource);
         contextHolder.set(datasource);
     }
 
